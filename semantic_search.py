@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
-
+import argparse
 
 class SemanticSearch:
     """A simple semantic search engine using sentence embeddings
@@ -52,7 +52,13 @@ class SemanticSearch:
         ranked = sorted(zip(self.documents, scores), key=lambda x: x[1], reverse=True)
         return ranked[:top_k]
 
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Semantic search over your notes")
+    parser.add_argument("query", type=str, help="Search query")
+    parser.add_argument("--top_k", type=int, default=3, help="Number of results")
+    args = parser.parse_args()
+
     search = SemanticSearch()
 
     docs = [
@@ -65,7 +71,7 @@ if __name__ == "__main__":
     ]
 
     search.add_documents(docs)
+    results = search.search(args.query, top_k=args.top_k)
 
-    results = search.search("What did the pet do?", top_k=3)
     for doc, score in results:
         print(f"{score:.4f} — {doc}")
